@@ -128,7 +128,7 @@ class MuthurTerminal():
         for line in text.split("\n"):
             print(line)
             time.sleep(speed)
-            if sound and not self.mute:
+            if sound and not self.mute and process:
                 poll = process.poll()
                 if poll is not None:
                     # Sound is over
@@ -166,13 +166,14 @@ class MuthurTerminal():
             # Play sound using system audio player
             with open(os.devnull, 'w') as devnull:
                 if os.name == 'posix':  # Linux/macOS
-                    subprocess.run(["aplay", sound_path], stdout=devnull, stderr=devnull, check=True)
+                    return subprocess.Popen(["aplay", sound_path], stdout=devnull, stderr=devnull)
                 elif os.name == 'nt':  # Windows
-                    subprocess.run(["powershell", "-c", f"(New-Object Media.SoundPlayer '{sound_path}').PlaySync();"], stdout=devnull, stderr=devnull, check=True)
+                    return subprocess.Popen(["powershell", "-c", f"(New-Object Media.SoundPlayer '{sound_path}').PlaySync();"], stdout=devnull, stderr=devnull)
                 else:
                     raise RuntimeError("Unsupported OS for sound playback.")
         except Exception as e:
             print(f"Error playing sound: {e}")
+            return None
 
     def display_image(self, image_name):
         """
