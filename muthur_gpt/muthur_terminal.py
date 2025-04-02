@@ -81,21 +81,10 @@ class MuthurTerminal():
     def print_slow(self, text, speed=None, sound=True):
         if not speed:
             speed = self.config.get(constants.CONFIG_KEY_DEFAULT_SPEED)
-        process = self.play_sound("typing_long")
         for char in text:
             print(char, end="", flush=True)
             time.sleep(speed)
-            if sound and not self.mute:
-                poll = process.poll()
-                if poll is not None:
-                    # Sound is over
-                    process = self.play_sound("subtle_long_type")
-                elif char == "\n":
-                    return_sound_name = "loud_type_start"
-                    process = self.play_sound(return_sound_name)
         self.print_space(1)
-        if process:
-            process.kill()
 
     def print_reply(self, text):
         """
@@ -169,11 +158,21 @@ class MuthurTerminal():
         time.sleep(wait_time)
 
     def play_sound(self, sound_name):
-        if not self.mute:
+        try:
             sound_path = self.path_resolver.get_sound_path(sound_name)
             if not sound_path:
-                raise Exception(f"Sound file unresolved for {sound_name}")
-            return subprocess.Popen(["afplay", sound_path])
+                raise FileNotFoundError(f"Cannot find a sound with filename: {sound_name}. "
+                                        f"Resolved path: {os.path.join(constants.SOUND_DIR, sound_name + constants.SOUND_EXT)}")
+            # Play sound using system audio player
+            with open(os.devnull, 'w') as devnull:
+                if os.name == 'posix':  # Linux/macOS
+                    subprocess.run(["aplay", sound_path], stdout=devnull, stderr=devnull, check=True)
+                elif os.name == 'nt':  # Windows
+                    subprocess.run(["powershell", "-c", f"(New-Object Media.SoundPlayer '{sound_path}').PlaySync();"], stdout=devnull, stderr=devnull, check=True)
+                else:
+                    raise RuntimeError("Unsupported OS for sound playback.")
+        except Exception as e:
+            print(f"Error playing sound: {e}")
 
     def display_image(self, image_name):
         """

@@ -40,11 +40,16 @@ class PathResolver():
             # TODO make resource path case insensitive for name and ext?
             if os.path.exists(resource_path):
                 return resource_path
+        print(f"Error: Resource not found. Searched in project root: {self.project_root}, "
+              f"resource directory: {constants.RESOURCE_DIR}, relative path: {relative_path}")
         return None
 
     def get_sound_path(self, name):
         name += constants.SOUND_EXT
-        return self._get_resource_path(os.path.join(constants.SOUND_DIR, name))
+        sound_path = self._get_resource_path(os.path.join(constants.SOUND_DIR, name))
+        if not sound_path:
+            print(f"Error: Sound file '{name}' not found.")
+        return sound_path
 
     def get_ascii_path(self, name):
         name += constants.ASCII_IMAGE_EXT

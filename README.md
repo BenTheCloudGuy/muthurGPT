@@ -12,12 +12,33 @@ This was a quick weekend project, but feel free to add new plugins or features. 
 ![Example schematic](https://github.com/ecattell/muthurGPT/blob/main/screenshots/schematic.png?raw=true)
 
 ## Video
-[YouTube video of muthurGPT in action](https://youtu.be/2Sh9BtFipck?t=72)
+[YouTube video of muthurGPT in action](https://youtu.be/2`Sh9BtFipck?t=72)
 
 ## Setup
 
 ### Suggested terminal emulator
 This package outputs directly to stdout. I recommend running this on a terminal with a scanline aesthetic, such as cool-retro-terminal.
+
+#### Installing cool-retro-terminal on Debian-based systems
+1. Ensure you have the required dependencies:
+   ```bash
+   sudo apt update
+   sudo apt install -y build-essential cmake qt5-default qttools5-dev-tools qtmultimedia5-dev libqt5multimedia5-plugins
+   ```
+2. Clone the cool-retro-terminal repository:
+   ```bash
+   git clone https://github.com/Swordfish90/cool-retro-term.git
+   cd cool-retro-term
+   ```
+3. Build and install:
+   ```bash
+   mkdir build
+   cd build
+   cmake ..
+   make
+   sudo make install
+   ```
+4. Run `cool-retro-term` to start the terminal.
 
 I recommend using a rather large terminal font size to get the right look. The included ascii art assumes a minimum terminal width of 64 characters. That said, I wouldn't recommend going higher than 100.
 
@@ -69,4 +90,4 @@ While running the program, the user may use commands to interact with the tool. 
 - Make prompts configurable with string replacements.
 - Add standardized variant definitions in config for plugins.
 - Have two streams --- one for stdout/debugging one for MU/TH/UR.
-- Write simple unit tests, especially for plugin dev.  
+- Write simple unit tests, especially for plugin dev.
